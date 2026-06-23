@@ -40,19 +40,11 @@ jobs:
         run: pyinstaller --onefile olmon/main.py --name ${{ matrix.name }}
 
       - name: Upload artifact (Unix)
-        if: runner.os != 'Windows'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.name }}
           path: dist/${{ matrix.name }}
 
-      - name: Upload artifact (Windows)
-        if: runner.os == 'Windows'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.name }}
-          # Fix: PyInstaller adds .exe automatically on Windows
-          path: dist/${{ matrix.name }}.exe
 
   # ----------------------------
   # Publish to PyPI
@@ -92,8 +84,6 @@ jobs:
   # ----------------------------
   github-release:
     name: GitHub Release
-    # Fix: now depends on build job in the SAME workflow
-    # so artifacts are available to download
     needs: [build, publish-pypi]
     runs-on: ubuntu-latest
 

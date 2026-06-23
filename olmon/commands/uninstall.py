@@ -1,4 +1,4 @@
-#olmon/commands/uninstall.py
+# olmon/commands/uninstall.py
 def uninstall() -> None:
     """Remove olmon completely = pip, binary, and config."""
     import os

@@ -1,4 +1,4 @@
-#olmon/commands/update.py
+# olmon/commands/update.py
 import importlib.metadata
 import json
 import subprocess
@@ -9,6 +9,7 @@ from rich.console import Console
 from olmon import __version__
 
 console = Console()
+
 
 def _get_latest_version() -> str | None:
     import urllib.request
@@ -32,7 +33,7 @@ def _get_latest_version() -> str | None:
     return None
 
 
-def check_for_update()->None:
+def check_for_update() -> None:
     try:
         latest_version = _get_latest_version()
         if latest_version is None:
@@ -46,8 +47,7 @@ def check_for_update()->None:
         pass
 
 
-
-def _detect_install_method()->str:
+def _detect_install_method() -> str:
     if getattr(sys, "frozen", False):
         return "binary"
 
@@ -58,7 +58,6 @@ def _detect_install_method()->str:
         pass
 
     return "binary"
-
 
 
 def update():
@@ -73,7 +72,7 @@ def update():
             return
         console.print(
             f"\n[bold yellow]!! New version available: v{latest}[/bold yellow] [dim](you have v{__version__})[/dim]"  # noqa: E501
-            )
+        )
         console.print("[dim]    Use: olmon update[/dim]\n")
         method = _detect_install_method()
         match method:
@@ -81,27 +80,28 @@ def update():
                 console.print("Detected pip installation, updating...")
                 if importlib.util.find_spec("pip") is None:
                     console.print("pip not found, installing...")
-                    subprocess.run([sys.executable,"-m","ensurepip","--upgrade"],check=True)
+                    subprocess.run([sys.executable, "-m", "ensurepip", "--upgrade"], check=True)
                 subprocess.run(
-                    [sys.executable,"-m","pip","install","olmon","--upgrade"],
-                    check=True
+                    [sys.executable, "-m", "pip", "install", "olmon", "--upgrade"], check=True
                 )
             case "binary":
                 console.print("Detected binary installation, updating...")
                 result = subprocess.run(
-                        [
-                            "curl",
-                            "-fsSL",
-                            "https://raw.githubusercontent.com/glemiu6/olmon/master/scripts/install.sh"
-                        ],
-                        capture_output=True,
-                        check=True
+                    [
+                        "curl",
+                        "-fsSL",
+                        "https://raw.githubusercontent.com/glemiu6/olmon/master/scripts/install.sh",
+                    ],
+                    capture_output=True,
+                    check=True,
                 )
-                subprocess.run(["bash"],input=result.stdout,check=True)
+                subprocess.run(["bash"], input=result.stdout, check=True)
             case _:
                 console.print("Unknown installation method, please update manually")
                 console.print(" [cyan]pip install olmon --upgrade[/cyan]")
-                console.print(" [cyan]curl -fsSL https://raw.githubusercontent.com/glemiu6/olmon/master/scripts/install.sh | sh[/cyan]")  # noqa: E501
+                console.print(
+                    " [cyan]curl -fsSL https://raw.githubusercontent.com/glemiu6/olmon/master/scripts/install.sh | sh[/cyan]"
+                )  # noqa: E501
         console.print(
             "[bold green]Update complete! Restart your terminal to use the latest version.[/bold green]"  # noqa: E501
         )

@@ -4,8 +4,9 @@ from rich.table import Table
 
 console = Console()
 
-def print_status(version:str,host:str,total_models:int,running_models:int)->None:
-    status_color = "green" if running_models>0 else "blue"
+
+def print_status(version: str, host: str, total_models: int, running_models: int) -> None:
+    status_color = "green" if running_models > 0 else "blue"
     indicator = "🟢" if running_models > 0 else "🔵"
 
     content = (
@@ -13,13 +14,10 @@ def print_status(version:str,host:str,total_models:int,running_models:int)->None
         f"[bold]Host[/bold] {host}\n"
         f"[bold]Models[/bold] {total_models} installed, {running_models} running\n"
     )
-    console.print(Panel(
-        content,
-        title=f"{indicator} Ollama is running",
-        border_style=status_color
-    ))
+    console.print(Panel(content, title=f"{indicator} Ollama is running", border_style=status_color))
 
-def print_models_table(models)->None:
+
+def print_models_table(models) -> None:
     table = Table(title="Models")
     table.add_column("Name")
     table.add_column("Size")
@@ -27,13 +25,17 @@ def print_models_table(models)->None:
     table.add_column("Quantization")
     table.add_column("Format")
     for model in models:
-        table.add_row(model["name"],
-                      format_size(model["size"]),
-                      model["details"].get("parameter_size", "N/A"),
-                      model["details"].get("quantization_level","N/A"),
-                      model["details"].get("format","N/A"))
+        table.add_row(
+            model["name"],
+            format_size(model["size"]),
+            model["details"].get("parameter_size", "N/A"),
+            model["details"].get("quantization_level", "N/A"),
+            model["details"].get("format", "N/A"),
+        )
     console.print(table)
-def print_ps_table(processes)->None:
+
+
+def print_ps_table(processes) -> None:
     table = Table(title="Running Models")
     table.add_column("Name")
     table.add_column("Size")
@@ -46,21 +48,23 @@ def print_ps_table(processes)->None:
 
     for model in processes:
         table.add_row(
-            model.get("name","N/A"),
-            format_size(model.get("size",0)),
-            format_size(model.get("size_vram",0)),
-            model.get("details",{}).get("parameter_size","N/A"),
-            str(model.get("context_length",0)),
-            model.get("details",{}).get("family","N/A"),
-            model.get("details",{}).get("quantization_level","N/A"),
-            model.get("expires_at","N/A")
+            model.get("name", "N/A"),
+            format_size(model.get("size", 0)),
+            format_size(model.get("size_vram", 0)),
+            model.get("details", {}).get("parameter_size", "N/A"),
+            str(model.get("context_length", 0)),
+            model.get("details", {}).get("family", "N/A"),
+            model.get("details", {}).get("quantization_level", "N/A"),
+            model.get("expires_at", "N/A"),
         )
     console.print(table)
 
-def print_error(msg:str)->None:
+
+def print_error(msg: str) -> None:
     console.print(f"[bold red]🔴 Error:[/bold red] {msg}")
 
-def print_offline(host:str)->None:
+
+def print_offline(host: str) -> None:
     status_color = "red"
     indicator = "🔴"
     content = (
@@ -68,11 +72,9 @@ def print_offline(host:str)->None:
         f"Make sure Ollama is running:\n"
         f"[bold yellow]ollama serve[/bold yellow]\n"
     )
-    console.print(Panel(
-        content,
-        title=f"{indicator} Ollama is unreachable",
-        border_style=status_color
-    ))
+    console.print(
+        Panel(content, title=f"{indicator} Ollama is unreachable", border_style=status_color)
+    )
 
 
 def print_inspect(data: dict):
@@ -93,15 +95,11 @@ def print_inspect(data: dict):
     modified = data.get("modified_at", "—").split("T")[0]
 
     # find context_length from model_info (key ends with .context_length)
-    context = next(
-        (str(v) for k, v in model_info.items() if k.endswith(".context_length")), "—"
-    )
+    context = next((str(v) for k, v in model_info.items() if k.endswith(".context_length")), "—")
     embedding = next(
         (str(v) for k, v in model_info.items() if k.endswith(".embedding_length")), "—"
     )
-    blocks = next(
-        (str(v) for k, v in model_info.items() if k.endswith(".block_count")), "—"
-    )
+    blocks = next((str(v) for k, v in model_info.items() if k.endswith(".block_count")), "—")
 
     # build the panel content
     content = (
@@ -122,9 +120,9 @@ def print_inspect(data: dict):
     console.print(Panel(content, title=f"[bold]{details.get('family', 'Model')}[/bold]"))
 
 
-def format_size(bts:int)->str:
+def format_size(bts: int) -> str:
     gb = bts / (1024**3)
-    if gb>=1:
+    if gb >= 1:
         return f"{gb:.1f} GB"
-    mb= bts / (1024**2)
+    mb = bts / (1024**2)
     return f"{mb:.1f} MB"
