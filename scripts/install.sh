@@ -23,7 +23,8 @@ detect_platform() {
           INSTALL_DIR="/opt/homebrew/bin"
           ;;
         x86_64)
-          echo "Intel Mac binary not available. Use pip install olmon"
+          echo "Intel Mac binary not available."
+          echo "Install via pip: pip install olmon"
           exit 1
           ;;
         *)  echo "Unsupported architecture: $ARCH"; exit 1 ;;
@@ -56,17 +57,17 @@ get_latest_version() {
 download_binary() {
   URL="$REPO/releases/download/$LATEST/$BINARY"
   echo "Downloading from $URL..."
-  curl -L --progress-bar "$URL" -o komit
-  if [ $? -ne 0 ] || [ ! -s komit ]; then
+  curl -L --progress-bar "$URL" -o olmon
+  if [ $? -ne 0 ] || [ ! -s olmon ]; then
     rm -f komit
     exit 1
   fi
-  chmod +x komit
+  chmod +x olmon
   if [ ! -d "$INSTALL_DIR" ]; then
     echo "Creating $INSTALL_DIR..."
     sudo mkdir -p "$INSTALL_DIR"
   fi
-  sudo mv komit "$INSTALL_DIR/"
+  sudo mv olmon "$INSTALL_DIR/"
   echo "Installed to $INSTALL_DIR/olmon"
 }
 
@@ -79,7 +80,7 @@ print_success() {
   echo "Run 'olmon models'        to list installed models"
   echo "Run 'olmon ps'            to see running models"
   echo "Run 'olmon watch'         to open live dashboard"
-  echo "Run 'olmon config show'   to view your config"
+  echo "Run 'olmon --help'   to view your config"
   echo ""
 }
 

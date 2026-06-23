@@ -33,11 +33,32 @@ def print_models_table(models)->None:
                       model["details"].get("quantization_level","N/A"),
                       model["details"].get("format","N/A"))
     console.print(table)
-def print_ps_table(processes):
-    pass
+def print_ps_table(processes)->None:
+    table = Table(title="Running Models")
+    table.add_column("Name")
+    table.add_column("Size")
+    table.add_column("VRAM")
+    table.add_column("Params")
+    table.add_column("Context Length")
+    table.add_column("Family")
+    table.add_column("Quantization")
+    table.add_column("Expires At")
+
+    for model in processes:
+        table.add_row(
+            model.get("name","N/A"),
+            format_size(model.get("size",0)),
+            format_size(model.get("size_vram",0)),
+            model.get("details",{}).get("parameter_size","N/A"),
+            str(model.get("context_length",0)),
+            model.get("details",{}).get("family","N/A"),
+            model.get("details",{}).get("quantization_level","N/A"),
+            model.get("expires_at","N/A")
+        )
+    console.print(table)
 
 def print_error(msg:str)->None:
-    console.print(f"[bolt red]🔴 Error:[/bold red] {msg}")
+    console.print(f"[bold red]🔴 Error:[/bold red] {msg}")
 
 def print_offline(host:str)->None:
     status_color = "red"
@@ -52,6 +73,54 @@ def print_offline(host:str)->None:
         title=f"{indicator} Ollama is unreachable",
         border_style=status_color
     ))
+
+
+def print_inspect(data: dict):
+    details = data.get("details", {})
+    model_info = data.get("model_info", {})
+    capabilities = data.get("capabilities", [])
+
+    # parse parameters string into a dict
+    # "temperature 0.7\nnum_ctx 2048" → {"temperature": "0.7", "num_ctx": "2048"}
+    raw_params = data.get("parameters", "")
+    params = {}
+    for line in raw_params.splitlines():
+        parts = line.split(maxsplit=1)
+        if len(parts) == 2:
+            params[parts[0]] = parts[1]
+
+    # clean up modified_at
+    modified = data.get("modified_at", "—").split("T")[0]
+
+    # find context_length from model_info (key ends with .context_length)
+    context = next(
+        (str(v) for k, v in model_info.items() if k.endswith(".context_length")), "—"
+    )
+    embedding = next(
+        (str(v) for k, v in model_info.items() if k.endswith(".embedding_length")), "—"
+    )
+    blocks = next(
+        (str(v) for k, v in model_info.items() if k.endswith(".block_count")), "—"
+    )
+
+    # build the panel content
+    content = (
+        f"[bold]Family[/bold]         {details.get('family', '—')}\n"
+        f"[bold]Format[/bold]         {details.get('format', '—')}\n"
+        f"[bold]Parameters[/bold]     {details.get('parameter_size', '—')}\n"
+        f"[bold]Quantization[/bold]   {details.get('quantization_level', '—')}\n"
+        f"[bold]Modified[/bold]       {modified}\n"
+        f"[bold]Capabilities[/bold]   {', '.join(capabilities) if capabilities else '—'}\n"
+        f"\n"
+        f"[bold]Context[/bold]        {context} tokens\n"
+        f"[bold]Embedding[/bold]      {embedding}\n"
+        f"[bold]Blocks[/bold]         {blocks}\n"
+        f"[bold]Temperature[/bold]    {params.get('temperature', '—')}\n"
+        f"[bold]num_ctx[/bold]        {params.get('num_ctx', '—')}\n"
+    )
+
+    console.print(Panel(content, title=f"[bold]{details.get('family', 'Model')}[/bold]"))
+
 
 def format_size(bts:int)->str:
     gb = bts / (1024**3)

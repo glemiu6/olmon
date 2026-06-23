@@ -4,10 +4,13 @@ import argparse
 import sys
 
 from olmon import __version__
-from olmon.commands.models import models_command
+from olmon.commands.models import models_command,inspect_command
 from olmon.commands.ps import ps_command
 from olmon.commands.status import status_command
 from olmon.commands.watch import watch_command
+from olmon.commands.update import update,check_for_update
+from olmon.commands.init import init_config
+from olmon.commands.uninstall import uninstall
 
 
 def parse_args(argv=None):
@@ -17,6 +20,9 @@ def parse_args(argv=None):
         formatter_class=argparse.RawTextHelpFormatter,
         epilog="""
         Examples:
+        $ olmon init
+        $ olmon uninstall
+        $ olmon update
         $ olmon status
         $ olmon models --sort size
         $ olmon ps
@@ -33,7 +39,9 @@ def parse_args(argv=None):
     )
 
     subparsers = parser.add_subparsers(title="Commands",dest="command",metavar="<command>")
-
+    subparsers.add_parser("init",help="Create default config file")
+    subparsers.add_parser("uninstall",help="Uninstall olmon")
+    subparsers.add_parser("update",help="Update olmon to the latest version")
     #status
     subparsers.add_parser("status",help="Show Ollama status")
 
@@ -62,17 +70,29 @@ def parse_args(argv=None):
 def app():
 
     args = parse_args()
-    if args.command == "status":
-        status_command(args.host)
-    elif args.command == "models":
-        models_command(args.host,args.sort,args.filter)
-    elif args.command == "ps":
-        ps_command(args.host)
-    elif args.command == "watch":
-        watch_command(args.host,args.interval)
-    else:
-        parse_args(["--help"])
-        sys.exit(0)
+    check_for_update()
+
+    match args.command:
+        case "status":
+            status_command(args.host)
+        case "models":
+            models_command(args.host,args.sort,args.filter)
+        case "inspect":
+            inspect_command(args.host,args.name)
+        case "ps":
+            ps_command(args.host)
+        case "watch":
+            watch_command(args.host,args.interval)
+        case "init":
+            init_config()
+        case "uninstall":
+            uninstall()
+        case "update":
+            update()
+        case _:
+            parse_args(["--help"])
+            sys.exit(0)
+            
 
 
 if __name__ == "__main__":

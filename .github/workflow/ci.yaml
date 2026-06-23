@@ -1,0 +1,45 @@
+#.github/workflows/ci.yaml
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      - name: Type check with mypy
+        run: uv run mypy olmon/
+
+      - name: Lint with Ruff
+        run: uv run ruff check olmon/
+
+      - name: Format check with Ruff
+        run: uv run ruff format --check olmon/
+
+      - name: Generate changelog
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: pyproject.toml
+          args: --latest

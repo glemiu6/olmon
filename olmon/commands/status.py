@@ -1,10 +1,10 @@
-import typer
+import sys
 
 from olmon import client, display
 from olmon.config import OlmonConfig
 
 
-def status_command(host:str=None):
+def status_command(host:str|None =None):
     config = OlmonConfig.load()
 
     resolved_host = host or config.host
@@ -12,7 +12,7 @@ def status_command(host:str=None):
     
     if version is None:
         display.print_offline(resolved_host)
-        raise typer.Exit(code=1)
+        sys.exit(1)
 
     models = client.get_models(resolved_host)
     running = client.get_running(resolved_host)

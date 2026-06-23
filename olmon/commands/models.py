@@ -1,11 +1,13 @@
-from olmon.client import get_models
 from olmon.config import OlmonConfig
-from olmon.display import print_error, print_models_table, print_offline
+from olmon.display import print_error, print_offline
 
 
-def models_command(host:str=None,
-                   sort:str=None,
-                   filters:str=None):
+def models_command(host:str|None =None,
+                   sort:str|None =None,
+                   filters:str|None =None):
+    from olmon.client import get_models
+    from olmon.display import print_models_table
+
     config = OlmonConfig.load()
     resolved_host = host or config.host
     raw = get_models(resolved_host)
@@ -27,3 +29,16 @@ def models_command(host:str=None,
         models = sorted(models,key=lambda x:x["name"])
 
     print_models_table(models)
+    
+def inspect_command(host: str | None =None, model: str | None =None):
+    from olmon.client import get_model_info
+    from olmon.display import print_inspect
+    config = OlmonConfig.load()
+    resolved_host = host or config.host
+    raw = get_model_info(resolved_host,model)
+    if raw is None:
+        print_error(f"Could not find info for '{model}'")
+        return
+    print_inspect(raw)
+
+    

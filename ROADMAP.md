@@ -17,8 +17,8 @@
 ## v0.2.0 — Core Monitoring
 > Goal: The commands you'd use daily
 
-- [ ] `ps` command with resource usage
-- [ ] `models inspect <name>`
+- [x] `ps` command with resource usage
+- [x] `models inspect <name>`
 - [ ] `--json` flag on all commands
 - [ ] `--no-color` flag
 - [ ] Proper exit codes (0 / 1 / 2)
@@ -28,8 +28,8 @@
 ## v0.3.0 — Live Dashboard
 > Goal: The "wow" feature
 
-- [ ] `watch` command with auto-refresh
-- [ ] Live status bar (🟢🔵🔴)
+- [x] `watch` command with auto-refresh
+- [x] Live status bar (🟢🔵🔴)
 - [ ] Running models table updates in place
 - [ ] `--interval` flag
 
