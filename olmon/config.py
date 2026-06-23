@@ -3,7 +3,7 @@ import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-from patformdirs import user_config_dir
+from platformdirs import user_config_dir
 
 CONFIG_PATH = Path(user_config_dir("olmon")) / "config.json"
 

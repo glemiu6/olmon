@@ -16,9 +16,7 @@ classifiers = [
 ]
 dependencies = [
     "platformdirs>=4.10.0",
-    "requests>=2.32.0",
     "rich>=15.0.0",
-    "typer>=0.12.0",
 ]
 
 [project.scripts]

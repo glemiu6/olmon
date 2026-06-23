@@ -3,14 +3,14 @@
 ---
 
 ## v0.1.0 — Foundation
-> Goal: Working CLI skeleton, can talk to Ollama
+> Goal: Working CLI skeleton can talk to Ollama
 
 - [x] Project setup (`typer` + `rich` + `requests`)
 - [x] `client.py` — basic Ollama API wrapper
-- [ ] `status` command
-- [ ] `models` command (simple table)
-- [ ] Config file (`~/.ollama-mon/config.json`)
-- [ ] `--host` flag override
+- [x] `status` command
+- [x] `models` command (simple table)
+- [x] Config file (`~/.ollama-mon/config.json`)
+- [x] `--host` flag override
 
 ---
 
