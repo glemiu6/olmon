@@ -57,18 +57,23 @@ get_latest_version() {
 download_binary() {
   URL="$REPO/releases/download/$LATEST/$BINARY"
   echo "Downloading from $URL..."
-  curl -L --progress-bar "$URL" -o olmon
+  curl -L --progress-bar --fail "$URL" -o olmon   # ← --fail makes curl exit on HTTP errors
+
   if [ $? -ne 0 ] || [ ! -s olmon ]; then
-    rm -f komit
+    echo "Error: download failed"
+    rm -f olmon
     exit 1
   fi
-  chmod +x olmon
-  if [ ! -d "$INSTALL_DIR" ]; then
-    echo "Creating $INSTALL_DIR..."
-    sudo mkdir -p "$INSTALL_DIR"
+
+  # verify it's actually a binary not an HTML error page
+  if file olmon | grep -q "HTML"; then
+    echo "Error: downloaded file is not a valid binary"
+    rm -f olmon
+    exit 1
   fi
+
+  chmod +x olmon
   sudo mv olmon "$INSTALL_DIR/"
-  echo "Installed to $INSTALL_DIR/olmon"
 }
 
 
