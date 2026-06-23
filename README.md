@@ -57,7 +57,10 @@ git clone https://github.com/glemiu6/olmon.git
 cd olmon
 uv pip install -e .
 ```
+### Windows
 
+Native Windows binary is not currently supported.
+Use [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) and follow the Linux installation instructions.
 ---
 
 ## Usage
