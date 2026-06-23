@@ -21,8 +21,7 @@ jobs:
             name: olmon-linux-x86_64
           - os: macos-latest
             name: olmon-macos-arm64
-          - os: windows-latest
-            name: olmon-windows-x86_64
+
 
     steps:
       - name: Checkout

@@ -100,7 +100,7 @@ def update():
                 console.print("Unknown installation method, please update manually")
                 console.print(" [cyan]pip install olmon --upgrade[/cyan]")
                 console.print(
-                    " [cyan]curl -fsSL https://raw.githubusercontent.com/glemiu6/olmon/master/scripts/install.sh | sh[/cyan]"
+                    " [cyan]curl -fsSL https://raw.githubusercontent.com/glemiu6/olmon/master/scripts/install.sh | sh[/cyan]"  # noqa: E501
                 )  # noqa: E501
         console.print(
             "[bold green]Update complete! Restart your terminal to use the latest version.[/bold green]"  # noqa: E501
