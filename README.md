@@ -2,6 +2,12 @@
 
 A lightweight CLI to monitor your Ollama models and usage in real time.
 
+---
+
+[![PyPI](https://img.shields.io/pypi/v/olmon)](https://pypi.org/project/olmon)
+[![PyPI Downloads](https://static.pepy.tech/personalized-badge/olmon?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/olmon)
+[![License](https://img.shields.io/github/license/glemiu6/olmon)](https://github.com/glemiu6/olmon/blob/master/LICENSE)
+
 ```
 $ olmon watch
 Watching http://localhost:11434 every 2s — Ctrl+C to stop
