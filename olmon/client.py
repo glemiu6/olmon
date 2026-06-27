@@ -54,11 +54,10 @@ def get_model_info(host: str, model_name: str) -> dict | None:
     except Exception:
         return None
 
+
 def stop_model(host: str, model_name: str) -> dict | None:
     try:
-        data = json.dumps({"model": model_name,
-                           "messages":[],
-                           "keep_alive":0}).encode("utf-8")
+        data = json.dumps({"model": model_name, "messages": [], "keep_alive": 0}).encode("utf-8")
         req = urllib.request.Request(
             url=f"{host}/api/generate",
             data=data,

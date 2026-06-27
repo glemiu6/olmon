@@ -20,7 +20,8 @@ def ps_command(host: str | None = None):
     print_ps_table(models)
     sys.exit(0)
 
-def stop_command(host: str | None = None,model_name: str | None = None) -> None:
+
+def stop_command(host: str | None = None, model_name: str | None = None) -> None:
     config = OlmonConfig.load()
     resolved_host = host or config.host
 
@@ -33,4 +34,3 @@ def stop_command(host: str | None = None,model_name: str | None = None) -> None:
         sys.exit(1)
     print_stop(model_name)
     sys.exit(0)
-

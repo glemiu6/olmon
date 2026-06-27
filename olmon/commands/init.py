@@ -23,7 +23,7 @@ def init_config() -> None:
 
     host = input("Ollama host [http://localhost:11434]: ") or "http://localhost:11434"
     interval = int(input("Update interval [2]: ") or 2)
-    no_color = input("Disable color (y/n) [n]: ").strip().lower() == 'y'
+    no_color = input("Disable color (y/n) [n]: ").strip().lower() == "y"
     default_sort = input("Default sort [name]: ") or "name"
 
     cfg = OlmonConfig(host, interval, no_color, default_sort)

@@ -4,10 +4,12 @@ from olmon.config import OlmonConfig
 from olmon.display import print_error, print_offline
 
 
-def models_command(host: str | None = None,
-                   sort: str | None = None,
-                   filters: str | None = None,
-                   json_output: bool = False):
+def models_command(
+    host: str | None = None,
+    sort: str | None = None,
+    filters: str | None = None,
+    json_output: bool = False,
+):
     from olmon.client import get_models
     from olmon.display import print_models_table
 
@@ -23,6 +25,7 @@ def models_command(host: str | None = None,
     models = raw["models"]
     if json_output:
         import json
+
         print(json.dumps(models, indent=2))
         sys.exit(0)
 
