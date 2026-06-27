@@ -53,3 +53,19 @@ def get_model_info(host: str, model_name: str) -> dict | None:
             return json.loads(result.read().decode("utf-8"))
     except Exception:
         return None
+
+def stop_model(host: str, model_name: str) -> dict | None:
+    try:
+        data = json.dumps({"model": model_name,
+                           "messages":[],
+                           "keep_alive":0}).encode("utf-8")
+        req = urllib.request.Request(
+            url=f"{host}/api/generate",
+            data=data,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req) as result:
+            return json.loads(result.read().decode("utf-8"))
+    except Exception:
+        return None

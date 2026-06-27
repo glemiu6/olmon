@@ -120,6 +120,13 @@ def print_inspect(data: dict):
     console.print(Panel(content, title=f"[bold]{details.get('family', 'Model')}[/bold]"))
 
 
+def print_stop(model:str)->None:
+    console.print(f"[bold green]✓[/bold green] {model} unloaded from VRAM")
+
+
+def print_stop_error(model:str)->None:
+    console.print(f"[bold red]✗[/bold red] Could not unload {model} from VRAM")
+
 def format_size(bts: int) -> str:
     gb = bts / (1024**3)
     if gb >= 1:

@@ -1,76 +1,101 @@
-# 🛣️ Ollama Monitor CLI — Roadmap
+# 🛣️ olmon — Roadmap
 
 ---
 
-## v0.1.0 — Foundation
-> Goal: Working CLI skeleton can talk to Ollama
+## v0.0.0 — Foundation ✅
+> Goal: Working CLI, can talk to Ollama
 
-- [x] Project setup (`typer` + `rich` + `requests`)
-- [x] `client.py` — basic Ollama API wrapper
+- [x] Project setup (`rich` + `argparse` + `urllib`)
+- [x] `client.py` — Ollama API wrapper
 - [x] `status` command
-- [x] `models` command (simple table)
-- [x] Config file (`~/.ollama-mon/config.json`)
+- [x] `models` command with sort and filter
+- [x] `inspect` command
+- [x] `ps` command
+- [x] `watch` live dashboard
+- [x] `init` command
+- [x] `update` command
+- [x] `uninstall` command
+- [x] Config file (`~/.config/olmon/config.json`)
 - [x] `--host` flag override
+- [x] PyPI publish
+- [x] GitHub Actions CI/CD
+- [x] Linux + macOS binaries
 
 ---
 
-## v0.2.0 — Core Monitoring
-> Goal: The commands you'd use daily
+## v0.1.0 — Scripting & Power Users
+> Goal: Make olmon the DevOps-friendly Ollama tool
 
-- [x] `ps` command with resource usage
-- [x] `models inspect <name>`
-- [ ] `--json` flag on all commands
-- [ ] `--no-color` flag
-- [ ] Proper exit codes (0 / 1 / 2)
-
----
-
-## v0.3.0 — Live Dashboard
-> Goal: The "wow" feature
-
-- [x] `watch` command with auto-refresh
-- [x] Live status bar (🟢🔵🔴)
-- [ ] Running models table updates in place
-- [ ] `--interval` flag
+- [x] `--json` flag on every command
+- [x] Proper exit codes (0 / 1 / 2) on every command
+- [x] `olmon stop <model>` — force unload a model from VRAM
+- [ ] `olmon compare <model1> <model2>` — side by side spec comparison
+- [ ] `--no-color` flag for pipe-friendly output
 
 ---
 
-## v0.4.0 — Polish & DX
-> Goal: Feel like a real tool
+## v0.2.0 — Hardware Awareness
+> Goal: Know your hardware limits before they hit you
 
-- [ ] `config` command (set/show/reset)
-- [ ] `--sort` and `--filter` on `models`
-- [ ] Better error messages (offline, wrong URL, etc.)
-- [ ] `--version` flag
-- [ ] README + usage docs
+- [ ] Show total VRAM vs used VRAM in `status`
+- [ ] Warn in `watch` when VRAM usage is above 90%
+- [ ] GPU info panel in `status` (NVIDIA + AMD)
 
 ---
 
-## v0.5.0 — Distribution
-> Goal: Others can install and use it
+## v0.3.0 — Discovery
+> Goal: Explore models without leaving the terminal
 
-- [ ] Package for `pip install ollama-mon`
-- [ ] PyPI publish
-- [ ] GitHub Actions CI
-- [ ] Releases with binaries (via PyInstaller)
+- [ ] `olmon search <query>` — search Ollama library from terminal
+- [ ] `olmon biggest` — show largest installed models
+- [ ] `olmon smallest` — show smallest installed models
+- [ ] `olmon unused` — models not used in the last N days
+- [ ] Model tags and capabilities filter in `models`
+- [ ] `olmon fit <model>` — will this model fit in my VRAM?
+- [ ] `olmon recommend --vram 6GB` — suggest models that fit your hardware
+
 
 ---
 
-## v1.0.0 — Stable
+## v0.4.0 — History & Usage Tracking
+> Goal: Know how you use your models over time
+
+- [ ] SQLite local database (`~/.config/olmon/history.db`)
+- [ ] Track which models were loaded and when
+- [ ] `olmon history` — show usage history
+- [ ] `olmon history --model qwen2.5:7b` — filter by model
+- [ ] `olmon stats` — total runtime per model, most used, last used
+
+---
+
+## v0.5.0 — Alerts & Automation
+> Goal: React to model state changes automatically
+
+- [ ] `olmon alert` — desktop notification when model loads/unloads
+- [ ] `olmon watch --alert` — notify on state change during watch
+- [ ] Webhook support — POST to a URL on model state change
+- [ ] `olmon wait <model>` — block until a model is loaded (for scripts)
+
+---
+
+## v1.0.0 — Stable & Polished
 > Goal: Confident public release
 
 - [ ] Full test coverage
-- [ ] Docs site (or detailed README)
+- [ ] Windows support (WSL-free)
+- [ ] Man page (`man olmon`)
+- [ ] Shell autocomplete (bash + zsh + fish)
+- [ ] Detailed docs site
 - [ ] Changelog
-- [ ] MIT License file
+- [ ] Performance audit — startup time under 100ms
 
 ---
 
-## v2.0.0 — Power Features *(stretch)*
-> Goal: The DevOps-friendly version
+## v2.0.0 — Browser Dashboard
+> Goal: The GUI version, built on top of the CLI
 
-- [ ] `logs` command
-- [ ] `alert` — notify on model state change
-- [ ] `history` — SQLite usage tracking
-- [ ] Remote profiles
-- [ ] Browser dashboard (the migration you mentioned)
+- [ ] `olmon serve` — start a local web dashboard
+- [ ] Real-time model monitoring in the browser
+- [ ] Usage history charts
+- [ ] Multi-host support (monitor multiple Ollama servers)
+- [ ] Dark / light mode

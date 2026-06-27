@@ -1,4 +1,5 @@
 import os
+import sys
 
 from platformdirs import user_config_dir
 
@@ -18,13 +19,13 @@ def init_config() -> None:
     if os.path.exists(paths):
         choice = input("Config file already exists. Overwrite? (y/n): ").lower()
         if choice != "y":
-            return
+            sys.exit(0)
 
     host = input("Ollama host [http://localhost:11434]: ") or "http://localhost:11434"
-    interval = input("Update interval [2]: ") or 2
-    no_color = input("Disable color [False]: ") or False
+    interval = int(input("Update interval [2]: ") or 2)
+    no_color = input("Disable color (y/n) [n]: ").strip().lower() == 'y'
     default_sort = input("Default sort [name]: ") or "name"
 
-    cfg = OlmonConfig(host, int(interval), bool(no_color), default_sort)
+    cfg = OlmonConfig(host, interval, no_color, default_sort)
     cfg.save()
     print("Config file created at", paths)

@@ -1,3 +1,5 @@
+import sys
+
 from olmon import client, display
 from olmon.config import OlmonConfig
 
@@ -10,7 +12,7 @@ def status_command(host: str | None = None):
 
     if version_data is None:
         display.print_offline(resolved_host)
-        return
+        sys.exit(1)
 
     models_data = client.get_models(resolved_host)
     running_data = client.get_running(resolved_host)
@@ -24,3 +26,4 @@ def status_command(host: str | None = None):
         total_models=total,
         running_models=running,
     )
+    sys.exit(0)

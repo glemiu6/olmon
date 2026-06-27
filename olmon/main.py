@@ -6,7 +6,7 @@ import sys
 from olmon import __version__
 from olmon.commands.init import init_config
 from olmon.commands.models import inspect_command, models_command
-from olmon.commands.ps import ps_command
+from olmon.commands.ps import ps_command, stop_command
 from olmon.commands.status import status_command
 from olmon.commands.uninstall import uninstall
 from olmon.commands.update import check_for_update, update
@@ -50,6 +50,9 @@ def parse_args(argv=None):
     models_parser.add_argument(
         "--filter", "-f", default=None, metavar="<query>", help="Filter by name or family"
     )
+    models_parser.add_argument(
+        "--json",action="store_true", default=False, help="Output as JSON"
+    )
 
     # inspect
     inspect_parser = subparsers.add_parser("inspect", help="Show details of a model")
@@ -67,6 +70,14 @@ def parse_args(argv=None):
         type=int,
         metavar="<seconds>",
         help="Refresh rate in seconds",
+    )
+
+    #stop
+    stop_parser = subparsers.add_parser("stop", help="Unload model from VRAM")
+    stop_parser.add_argument(
+        "model",
+        metavar="<model>",
+        help="Model name",
     )
 
     return parser.parse_args(argv)
@@ -94,6 +105,8 @@ def app():
             uninstall()
         case "update":
             update()
+        case "stop":
+            stop_command(args.host,args.model)
         case _:
             parse_args(["--help"])
             sys.exit(0)
