@@ -71,7 +71,7 @@ def update():
             console.print("[bold green]Already up to date[/bold green]")
             return
         console.print(
-            f"\n[bold yellow]!! New version available: v{latest}[/bold yellow] [dim](you have v{__version__})[/dim]"  # noqa: E501
+            f"\n[bold yellow]Updating to v{latest}...[/bold yellow]"
         )
         console.print("[dim]    Use: olmon update[/dim]\n")
         method = _detect_install_method()
