@@ -1,8 +1,8 @@
 import sys
 
-from olmon.client import get_running,stop_model
+from olmon.client import get_running, stop_model
 from olmon.config import OlmonConfig
-from olmon.display import print_error, print_offline, print_ps_table,print_stop_error,print_stop
+from olmon.display import print_error, print_offline, print_ps_table, print_stop, print_stop_error
 
 
 def ps_command(host: str | None = None):
