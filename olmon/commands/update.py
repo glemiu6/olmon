@@ -70,9 +70,7 @@ def update():
         if latest == __version__:
             console.print("[bold green]Already up to date[/bold green]")
             return
-        console.print(
-            f"\n[bold yellow]Updating to v{latest}...[/bold yellow]"
-        )
+        console.print(f"\n[bold yellow]Updating to v{latest}...[/bold yellow]")
         console.print("[dim]    Use: olmon update[/dim]\n")
         method = _detect_install_method()
         match method:
