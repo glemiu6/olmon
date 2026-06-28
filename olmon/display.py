@@ -128,6 +128,32 @@ def print_stop_error(model: str) -> None:
     console.print(f"[bold red]✗[/bold red] Could not unload {model} from VRAM")
 
 
+def print_compare(models: dict):
+    table = Table(title="Model Comparison")
+    table.add_column("", style="bold")
+
+    for name in models:
+        table.add_column(name, justify="center")
+
+    def get_info(data, key):
+        return next((str(v) for k, v in data.get("model_info", {}).items() if k.endswith(key)), "—")
+
+    fields = [
+        ("Family", lambda d: d.get("details", {}).get("family", "—")),
+        ("Format", lambda d: d.get("details", {}).get("format", "—")),
+        ("Parameters", lambda d: d.get("details", {}).get("parameter_size", "-")),
+        ("Quantization", lambda d: d.get("details", {}).get("quantization_level", "-")),
+        ("Context", lambda d: get_info(d, key=".context_length")),
+        ("Embedding", lambda d: get_info(d, key=".embedding_length")),
+        ("Blocks", lambda d: get_info(d, key=".block_count")),
+    ]
+
+    for label, extractor in fields:
+        row = [label] + [extractor(data) for data in models.values()]
+        table.add_row(*row)
+    console.print(table)
+
+
 def format_size(bts: int) -> str:
     gb = bts / (1024**3)
     if gb >= 1:

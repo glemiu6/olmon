@@ -4,6 +4,7 @@ import argparse
 import sys
 
 from olmon import __version__
+from olmon.commands.compare import compare_command
 from olmon.commands.init import init_config
 from olmon.commands.models import inspect_command, models_command
 from olmon.commands.ps import ps_command, stop_command
@@ -78,6 +79,15 @@ def parse_args(argv=None):
         help="Model name",
     )
 
+    # compare
+    compare_parser = subparsers.add_parser("compare", help="Compare models side by side")
+    compare_parser.add_argument(
+        "models",
+        nargs="+",  # one or more values
+        metavar="<model>",
+        help="Models to compare (e.g. qwen2.5:7b llama3.2:latest gemma4:latest)",
+    )
+
     return parser.parse_args(argv)
 
 
@@ -105,6 +115,10 @@ def app():
             update()
         case "stop":
             stop_command(args.host, args.model)
+
+        case "compare":
+            compare_command(args.host, args.models)
+
         case _:
             parse_args(["--help"])
             sys.exit(0)
