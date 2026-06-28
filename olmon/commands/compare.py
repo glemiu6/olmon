@@ -10,7 +10,7 @@ def compare_command(host: str | None = None, models: list[str] | None = None) ->
     config = OlmonConfig.load()
     resolved_host = host or config.host
 
-    if len(models) < 2:
+    if models is None or len(models) < 2:
         print_error("Please provide at least 2 models to compare")
         sys.exit(2)
     results = {}
