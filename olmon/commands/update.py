@@ -48,9 +48,19 @@ def check_for_update() -> None:
 
 
 def _detect_install_method() -> str:
+    import os
+
+    # PyInstaller binary
     if getattr(sys, "frozen", False):
         return "binary"
 
+    # check if running from a known binary location
+    executable = os.path.realpath(sys.argv[0])
+    binary_paths = ["/usr/local/bin", "/opt/homebrew/bin", os.path.expanduser("~/.local/bin")]
+    if any(executable.startswith(p) for p in binary_paths):
+        return "binary"
+
+    # pip install
     try:
         importlib.metadata.version("olmon")
         return "pip"

@@ -54,7 +54,7 @@ def uninstall() -> None:
         except subprocess.CalledProcessError:
             pass
 
-    console.print("\n[bold red]komit uninstalled. Goodbye![/bold red]")
+    console.print("\n[bold red]olmon uninstalled. Goodbye![/bold red]")
 
 
 def _detect_install_method() -> str:
