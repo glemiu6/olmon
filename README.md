@@ -9,17 +9,16 @@ A lightweight CLI to monitor your Ollama models and usage in real time.
 [![License](https://img.shields.io/github/license/glemiu6/olmon)](https://github.com/glemiu6/olmon/blob/master/LICENSE)
 
 ```
-$ olmon watch
-Watching http://localhost:11434 every 2s — Ctrl+C to stop
+$ olmon top
 
-  🟢 Ollama v0.30.8 — 14 models installed, 2 running
+╭─────────────────────────────────────── olmon top 01:09:32 ───────────────────────────────────────╮
+│ Model                        VRAM              VRAM %            Expires In      Status          │
+│ ornith:9b                    5.0 GB            ██░░░  41%        0m 22s          ● expiring      │
+│ phi4-mini:latest             2.9 GB            █░░░░  23%        0m 17s          ● expiring      │
+╰────────────────────────────── VRAM: 7.8 GB / 12.0 GB |  2 running ───────────────────────────────╯
 
-  ┏━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┓
-  ┃ Name            ┃ Size   ┃ VRAM   ┃ Expires At   ┃
-  ┡━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━┩
-  │ llama3.2:latest │ 2.4 GB │ 2.4 GB │ 2026-06-23   │
-  │ qwen2.5:7b      │ 4.4 GB │ 4.4 GB │ 2026-06-23   │
-  └─────────────────┴────────┴────────┴──────────────┘
+
+
 ```
 
 ---
@@ -32,6 +31,10 @@ Watching http://localhost:11434 every 2s — Ctrl+C to stop
 - 🟢 **Status indicators** — green / blue / red at a glance
 - ⚙️ **Configurable** — set your API host and refresh interval
 - 🪶 **Lightweight** — minimal dependencies, works over SSH on headless servers
+- 🖥️ **htop-style monitoring** — `olmon top` with VRAM usage and expiry countdown
+- 🛑 **Model control** — force unload models from VRAM
+- ⚖️ **Model comparison** — side by side spec comparison of multiple models
+- 🔧 **Scripting friendly** — `--json` flag and exit codes on every command
 
 ---
 
@@ -65,8 +68,9 @@ uv pip install -e .
 ```
 ### Windows
 
-Native Windows binary is not currently supported.
+Native Windows binary is not currently supported.  
 Use [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) and follow the Linux installation instructions.
+
 ---
 
 ## Usage
@@ -80,6 +84,11 @@ olmon inspect llama3:latest  # full details on a model
 olmon ps                   # show currently running models
 olmon watch                # live auto-refreshing dashboard
 olmon watch --interval 5   # refresh every 5 seconds
+olmon top                  # htop-style live monitoring
+olmon stop qwen2.5:7b      # unload a model from VRAM
+olmon compare qwen2.5:7b llama3.2:latest  # compare models
+olmon --no-color models    # pipe-friendly output
+olmon models --json        # output as JSON
 ```
 
 ### Global flags
@@ -105,7 +114,6 @@ olmon --version                                  # print version
 
 ```bash
 olmon init          # create default config file
-olmon config show   # view current config
 ```
 
 Config is stored at `~/.config/olmon/config.json`:
@@ -138,6 +146,15 @@ Most Ollama monitoring tools are GUI or system tray apps. `olmon` is built for:
 - **Remote monitoring** — works over SSH
 - **Shell scripting** — pipe-friendly with `--json` flag and exit codes
 - **DevOps workflows** — integrate into scripts and cron jobs
+
+---
+
+
+## GPU Support
+
+- **NVIDIA** — full VRAM monitoring via `nvidia-smi`
+- **AMD** — coming soon
+- **CPU only** — VRAM stats not available
 
 ---
 

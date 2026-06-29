@@ -9,9 +9,11 @@ from olmon.commands.init import init_config
 from olmon.commands.models import inspect_command, models_command
 from olmon.commands.ps import ps_command, stop_command
 from olmon.commands.status import status_command
+from olmon.commands.top import top_command
 from olmon.commands.uninstall import uninstall
 from olmon.commands.update import check_for_update, update
 from olmon.commands.watch import watch_command
+from olmon.config import OlmonConfig
 
 
 def parse_args(argv=None):
@@ -34,6 +36,9 @@ def parse_args(argv=None):
     parser.add_argument("--version", action="version", version=f"{__version__}")
     parser.add_argument(
         "--host", "-H", default=None, metavar="<url>", help="Ollama API URL (overrides config)"
+    )
+    parser.add_argument(
+        "--no-color", action="store_true", default=False, help="Disable color output for piping"
     )
 
     subparsers = parser.add_subparsers(title="Commands", dest="command", metavar="<command>")
@@ -88,12 +93,27 @@ def parse_args(argv=None):
         help="Models to compare (e.g. qwen2.5:7b llama3.2:latest gemma4:latest)",
     )
 
+    # top
+    top_parser = subparsers.add_parser("top", help="htop-style live view of running models")
+    top_parser.add_argument(
+        "--interval", "-i", default=None, type=int, help="Refresh rate in seconds"
+    )  # noqa: E501
+
     return parser.parse_args(argv)
 
 
 def app():
 
     args = parse_args()
+    config = OlmonConfig.load()
+
+    if args.no_color or config.no_color:
+        from rich.console import Console
+
+        import olmon.display as display
+
+        display.console = Console(no_color=True)
+
     check_for_update()
 
     match args.command:
@@ -118,7 +138,8 @@ def app():
 
         case "compare":
             compare_command(args.host, args.models)
-
+        case "top":
+            top_command(args.host, args.interval)
         case _:
             parse_args(["--help"])
             sys.exit(0)

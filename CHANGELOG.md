@@ -3,11 +3,18 @@
 All notable changes to this project will be documented in this file.
 
 ---
+## [0.2.0]
+
+### Added
+- `olmon top` - htop-style monitoring for running models
+- VRAM used / total shown in `olmon status` (NVIDIA GPUs)
+- `--no-color` flag for pipe-friendly output
 
 ## [0.1.3] - 2026-06-28
 
 ### Added
 - `olmon compare` — side by side comparison of multiple models
+- `--json` flag on all commands for scriptable output
 
 ### Fixed
 - Fixed duplicate update notification when running `olmon update`
@@ -57,6 +64,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+[0.2.0]: https://github.com/glemiu6/olmon/compare/v0.1.3...v0.2.0
 [0.1.3]: https://github.com/glemiu6/olmon/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/glemiu6/olmon/compare/v0.1.0...v0.1.2
 [0.1.0]: https://github.com/glemiu6/olmon/releases/tag/v0.1.0

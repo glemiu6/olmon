@@ -68,3 +68,22 @@ def stop_model(host: str, model_name: str) -> dict | None:
             return json.loads(result.read().decode("utf-8"))
     except Exception:
         return None
+
+
+def get_total_vram() -> int | None:
+    """
+    Fetches total VRAM from NVIDIA GPU via nvidia-smi
+    """
+    try:
+        import subprocess
+
+        result = subprocess.run(
+            ["nvidia-smi", "--query-gpu=memory.total", "--format=csv,noheader,nounits"],
+            capture_output=True,
+            text=True,
+            check=True,
+            encoding="utf-8",
+        )
+        return int(result.stdout.strip()) * 1024 * 1024
+    except Exception:
+        return None

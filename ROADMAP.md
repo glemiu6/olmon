@@ -3,26 +3,7 @@
 
 ---
 
-## v0.0.0 — Foundation ✅
-> **Goal:** Working CLI, can talk to Ollama
 
-- ✅ Project setup (rich + argparse + urllib)
-- ✅ `client.py` — Ollama API wrapper
-- ✅ `status` command
-- ✅ `models` command with sort and filter
-- ✅ `inspect` command
-- ✅ `ps` command
-- ✅ `watch` live dashboard
-- ✅ `init` command
-- ✅ `update` command
-- ✅ `uninstall` command
-- ✅ Config file (`~/.config/olmon/config.json`)
-- ✅ `--host` flag override
-- ✅ PyPI publish
-- ✅ GitHub Actions CI/CD
-- ✅ Linux + macOS binaries
-
----
 
 ## v0.1.0 — Scripting & Power Users
 > **Goal:** Make olmon the DevOps-friendly Ollama tool
@@ -31,9 +12,8 @@
 - ✅ Proper exit codes (0 / 1 / 2) on every command
 - ✅ `olmon stop <model>` — force unload a model from VRAM
 - ✅ `olmon compare <model1> <model2>` — side by side spec comparison
-- [ ] `--no-color` flag for pipe-friendly output
-- [ ] `olmon top` — htop-style live view of all running models (CPU%, VRAM, tokens/min)
-- [ ]  Request history & replay — log every prompt/response with token counts
+- ✅ `--no-color` flag for pipe-friendly output
+- ✅ `olmon top` — htop-style live view of all running models (CPU%, VRAM, tokens/min)
 
 ---
 
@@ -53,7 +33,6 @@
 > **Goal:** Explore models without leaving the terminal
 
 - [ ] `olmon search <query>` — search Ollama library from terminal (scrapes ollama.com/search)
-- [ ]  `olmon search <query> --source all` — search Ollama + HuggingFace + OpenAI in one command
 - [ ]  Search results show size, quantization, benchmark scores inline
 - [ ] `olmon biggest` — show largest installed models
 - [ ] `olmon smallest` — show smallest installed models
@@ -72,7 +51,6 @@
 - [ ] `olmon history` — show usage history
 - [ ] `olmon history --model qwen2.5:7b` — filter by model
 - [ ] `olmon stats` — total runtime per model, most used, last used
-- [ ]  `olmon history --replay <id>` — replay a past prompt across models
 - [ ]  Per-model latency stats (p50, p95 response times)
 
 ---
@@ -84,21 +62,9 @@
 - [ ] `olmon watch --alert` — notify on state change during watch
 - [ ] Webhook support — POST to a URL on model state change
 - [ ] `olmon wait <model>` — block until a model is loaded (for scripts)
-- [ ]  `olmon bench <model1> <model2>` — run same prompt on both, compare speed & output
-- [ ]  Token usage shown per response with `--verbose` flag
 
 ---
 
-## v0.6.0 — Cloud & Unified Monitoring 🆕
-> **Goal:** Monitor local + cloud models in one place
-
-- [ ]  Connect OpenAI, Anthropic, and OpenAI-compatible APIs via config
-- [ ]  `olmon ps` shows cloud models alongside local ones
-- [ ]  `olmon cost` — monthly spend across local + cloud
-- [ ]  Unified token tracking across all providers
-- [ ]  `olmon compare <local-model> <cloud-model>` — cross-provider comparison
-
----
 
 ## v1.0.0 — Stable & Polished
 > **Goal:** Confident public release

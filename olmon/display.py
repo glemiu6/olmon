@@ -1,11 +1,17 @@
+import datetime
+import time
+
 from rich.console import Console
+from rich.live import Live
 from rich.panel import Panel
 from rich.table import Table
 
 console = Console()
 
 
-def print_status(version: str, host: str, total_models: int, running_models: int) -> None:
+def print_status(
+    version: str, host: str, total_models: int, running_models: int, vram_used: str
+) -> None:  # noqa: E501
     status_color = "green" if running_models > 0 else "blue"
     indicator = "🟢" if running_models > 0 else "🔵"
 
@@ -13,6 +19,7 @@ def print_status(version: str, host: str, total_models: int, running_models: int
         f"[bold]Version[/bold] {version}\n"
         f"[bold]Host[/bold] {host}\n"
         f"[bold]Models[/bold] {total_models} installed, {running_models} running\n"
+        f"[bold]VRAM[/bold] {vram_used} \n"
     )
     console.print(Panel(content, title=f"{indicator} Ollama is running", border_style=status_color))
 
@@ -154,9 +161,93 @@ def print_compare(models: dict):
     console.print(table)
 
 
+def print_top(models: list, total_vram: int | None) -> Panel:
+    used_vram = sum(m.get("size_vram", 0) for m in models)
+
+    if total_vram:
+        vram_summary = f"VRAM: {format_size(used_vram)} / {format_size(total_vram)}"
+    else:
+        vram_summary = f"VRAM: {format_size(used_vram)} used"
+
+    header = f"{vram_summary} |  {len(models)} running"
+
+    table = Table(box=None, pad_edge=False, show_header=True, expand=True)
+    table.add_column("Model", style="bold", min_width=20)
+    table.add_column("VRAM", min_width=12)
+    table.add_column("VRAM %", min_width=12)
+    table.add_column("Expires In", min_width=10)
+    table.add_column("Status", min_width=12)
+
+    for model in models:
+        name = model.get("name", "-")
+        size_vram = model.get("size_vram", 0)
+        expires_at = model.get("expires_at", "-")
+
+        countdown = format_countdown(expires_at)
+        vram_bar = format_vram_bar(size_vram, total_vram)
+
+        try:
+            expires = datetime.datetime.fromisoformat(expires_at)
+            remaining = (expires - datetime.datetime.now(datetime.timezone.utc)).total_seconds()
+            status = "[green]● active[/green]" if remaining > 60 else "[yellow]● expiring[/yellow]"
+        except Exception:
+            status = "[green]● active[/green]"
+
+        table.add_row(
+            name,
+            format_size(size_vram),
+            vram_bar,
+            countdown,
+            status,
+        )
+
+    return Panel(
+        table,
+        title=f"[bold]olmon top[/bold] [dim]{datetime.datetime.now().strftime('%H:%M:%S')}[/dim]",
+        subtitle=header,
+        width=min(console.width, 100),
+    )
+
+
+def run_top(host: str, interval: int, total_vram: int | None):
+    from olmon.client import get_running
+
+    try:
+        with Live(refresh_per_second=1, transient=True) as live:
+            while True:
+                raw = get_running(host)
+                models = raw.get("models", []) if raw else []
+                live.update(print_top(models, total_vram))
+                time.sleep(interval)
+    except KeyboardInterrupt:
+        console.print("\n[dim]Stopped.[/dim]")
+
+
 def format_size(bts: int) -> str:
     gb = bts / (1024**3)
     if gb >= 1:
         return f"{gb:.1f} GB"
     mb = bts / (1024**2)
     return f"{mb:.1f} MB"
+
+
+def format_countdown(expires_at: str) -> str:
+    try:
+        expires = datetime.datetime.fromisoformat(expires_at)
+        remaining = expires - datetime.datetime.now(datetime.timezone.utc)
+        total_sec = int(remaining.total_seconds())
+        if total_sec <= 0:
+            return "expiring..."
+        mins, secs = divmod(total_sec, 60)
+        return f"{mins}m {secs}s"
+    except Exception:
+        return "-"
+
+
+def format_vram_bar(used: int, total: int | None) -> str:
+    if total is None:
+        return "— " * 5  # consistent width
+    pct = min(used / total, 1.0)  # ← cap at 100% to avoid overflow
+    filled = int(pct * 5)
+    bar = "█" * filled + "░" * (5 - filled)
+    return f"{bar} {int(pct * 100):>3}%"
