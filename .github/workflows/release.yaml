@@ -33,7 +33,7 @@ jobs:
           python-version: "3.13"
 
       - name: Install dependencies
-        run: pip install pyinstaller platformdirs rich
+        run: pip install pyinstaller platformdirs rich httpx
 
       - name: Build binary
         run: pyinstaller --onefile olmon/main.py --name ${{ matrix.name }}

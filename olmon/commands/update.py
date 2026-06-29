@@ -1,6 +1,5 @@
 # olmon/commands/update.py
 import importlib.metadata
-import json
 import subprocess
 import sys
 
@@ -12,25 +11,20 @@ console = Console()
 
 
 def _get_latest_version() -> str | None:
-    import urllib.request
+    import httpx
 
-    for url, extract in [
-        (
-            "https://api.github.com/repos/glemiu6/olmon/releases/latest",
-            lambda d: d["tag_name"].lstrip("v"),
-        ),
-        (
-            "https://pypi.org/pypi/olmon/json",
-            lambda d: d["info"]["version"],
-        ),
-    ]:
-        try:
-            with urllib.request.urlopen(url, timeout=2) as r:
-                return extract(json.loads(r.read().decode("utf-8")))
-        except Exception:
-            continue
-
-    return None
+    try:
+        response = httpx.get(
+            "https://api.github.com/repos/glemiu6/olmon/releases/latest", timeout=2
+        )
+        return response.json()["tag_name"].lstrip("v")
+    except Exception:
+        pass
+    try:
+        response = httpx.get("https://pypi.org/pypi/olmon/json", timeout=2)
+        return response.json()["info"]["version"]
+    except Exception:
+        return None
 
 
 def check_for_update() -> None:
