@@ -36,16 +36,19 @@ CREATE INDEX IF NOT EXISTS idx_model_tags_model_name ON model_tags(model_name);
 CREATE INDEX IF NOT EXISTS idx_model_tags_size ON model_tags(size_bytes);
 """
 
-def get_connection()-> sqlite3.Connection:
+
+def get_connection() -> sqlite3.Connection:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.executescript(SCHEMA)
     return conn
 
-def now_iso()->str:
+
+def now_iso() -> str:
     return datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
 
-def upsert_model(conn:sqlite3.Connection, model:dict)->None:
+
+def upsert_model(conn: sqlite3.Connection, model: dict) -> None:
     conn.execute(
         """
         INSERT INTO models (name, description, capabilities, pulls, tag_count, updated_text, scraped_at)
@@ -57,10 +60,12 @@ def upsert_model(conn:sqlite3.Connection, model:dict)->None:
             tag_count = excluded.tag_count,
             updated_text = excluded.updated_text,
             scraped_at = excluded.scraped_at
-        """,model,  # noqa: E501
+        """,  # noqa: E501
+        model,  # noqa: E501
     )
 
-def upsert_tag(conn:sqlite3.Connection,tag:dict)->None:
+
+def upsert_tag(conn: sqlite3.Connection, tag: dict) -> None:
     conn.execute(
         """
         INSERT INTO model_tags (full_name, model_name, tag, size_bytes, context_length, input_type, digest, is_default, updated_text, scraped_at)
@@ -78,15 +83,21 @@ def upsert_tag(conn:sqlite3.Connection,tag:dict)->None:
     )
 
 
-def get_stat(conn:sqlite3.Connection)->dict:
+def get_stat(conn: sqlite3.Connection) -> dict:
     model_count = conn.execute("SELECT COUNT(*) FROM models").fetchone()[0]
     tag_count = conn.execute("SELECT COUNT(*) FROM model_tags").fetchone()[0]
     last_scrape = conn.execute("SELECT MAX(scraped_at) FROM models").fetchone()[0]
     db_size = DB_PATH.stat().st_size if DB_PATH.exists() else 0
-    return {"model_count":model_count,"tag_count":tag_count,"last_scrape":last_scrape,"db_size":db_size,"db_path":str(DB_PATH)}  # noqa: E501
+    return {
+        "model_count": model_count,
+        "tag_count": tag_count,
+        "last_scrape": last_scrape,
+        "db_size": db_size,
+        "db_path": str(DB_PATH),
+    }  # noqa: E501
 
 
-def search_models(conn:sqlite3.Connection,query:str,limit:int = 20)->list[sqlite3.Row]:
+def search_models(conn: sqlite3.Connection, query: str, limit: int = 20) -> list[sqlite3.Row]:
     conn.row_factory = sqlite3.Row
     like = f"%{query.lower()}%"
     return conn.execute(
@@ -96,17 +107,21 @@ def search_models(conn:sqlite3.Connection,query:str,limit:int = 20)->list[sqlite
         ORDER BY pulls DESC
         LIMIT ?
         """,
-        (like,like,limit),
+        (like, like, limit),
     ).fetchall()
 
-def get_tags_for_model(conn:sqlite3.Connection,model_name:str)->list[sqlite3.Row]:
-    conn.row_factory=sqlite3.Row
+
+def get_tags_for_model(conn: sqlite3.Connection, model_name: str) -> list[sqlite3.Row]:
+    conn.row_factory = sqlite3.Row
     return conn.execute(
         "SELECT * FROM model_tags WHERE model_name = ? ORDER BY size_bytes DESC", (model_name,)
     ).fetchall()
 
-def find_tags_under_size(conn:sqlite3.Connection,max_bytes:int,limit:int= 20)->list[sqlite3.Row]:
-    conn.row_factory=sqlite3.Row
+
+def find_tags_under_size(
+    conn: sqlite3.Connection, max_bytes: int, limit: int = 20
+) -> list[sqlite3.Row]:
+    conn.row_factory = sqlite3.Row
     return conn.execute(
         """
         SELECT model_tags.*, models.description,models.pulls
@@ -116,5 +131,5 @@ def find_tags_under_size(conn:sqlite3.Connection,max_bytes:int,limit:int= 20)->l
         ORDER BY models.pulls DESC, size_bytes DESC
         LIMIT ?
         """,
-        (max_bytes,limit),
+        (max_bytes, limit),
     ).fetchall()

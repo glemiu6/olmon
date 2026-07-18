@@ -1,4 +1,19 @@
 # olmon/scraper.py
+"""Scrapes https://ollama.com/library since there is no public API for the
+model library (only for models already pulled locally).
+
+Two pages are scraped:
+  - /library                 -> one card per base model (name, description,
+                                 capability badges, pull count, tag count)
+  - /library/<model>/tags    -> every pullable tag/variant for that model
+                                 (size on disk, context window, digest)
+
+The parser keys off `<a href="/library/...">` patterns rather than CSS
+classes, since hrefs are far less likely to change than styling. If
+ollama.com reorganizes the library pages, PULLS_TAGS_RE / SIZE_RE / etc.
+below are the places to fix first — run `olmon db update` and compare
+`olmon db stats` before/after to sanity check.
+"""
 
 import re
 
@@ -53,9 +68,7 @@ def _parse_size_bytes(text: str) -> int | None:
 
 def _fetch_soup(url: str) -> BeautifulSoup:
     try:
-        resp = httpx.get(
-            url, headers={"User-Agent": USER_AGENT}, timeout=15, follow_redirects=True
-        )
+        resp = httpx.get(url, headers={"User-Agent": USER_AGENT}, timeout=15, follow_redirects=True)
         resp.raise_for_status()
     except httpx.HTTPError as e:
         raise ScrapeError(f"Failed to fetch {url}: {e}") from e
@@ -70,7 +83,7 @@ def fetch_library_index() -> list[dict]:
 
     for a in soup.find_all("a", href=True):
         href = a["href"]
-        if not href.startswith("/library/"):
+        if not isinstance(href, str) or not href.startswith("/library/"):
             continue
         name = href.removeprefix("/library/")
         if ":" in name or "/" in name or not name or name in seen:
@@ -91,8 +104,7 @@ def fetch_library_index() -> list[dict]:
         description = " ".join(
             t
             for t in tokens[1:]
-            if t.lower() not in CAPABILITY_WORDS
-            and not SIZE_TAG_RE.match(t.strip(",."))
+            if t.lower() not in CAPABILITY_WORDS and not SIZE_TAG_RE.match(t.strip(",."))
         )
 
         seen.add(name)
@@ -121,7 +133,7 @@ def fetch_model_tags(model_name: str) -> list[dict]:
 
     for a in soup.find_all("a", href=True):
         href = a["href"]
-        if not href.startswith(prefix):
+        if not isinstance(href, str) or not href.startswith(prefix):
             continue
         full_name = href.removeprefix("/library/")
         if full_name in seen:
