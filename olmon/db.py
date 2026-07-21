@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS models (
 );
     
 CREATE TABLE IF NOT EXISTS model_tags (
-    full_name TEXT PRRIMARY KEY,
+    full_name TEXT PRIMARY KEY,
     model_name TEXT NOT NULL REFERENCES models(name),
     tag TEXT,
     size_bytes INTEGER,

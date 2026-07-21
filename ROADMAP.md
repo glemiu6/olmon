@@ -44,8 +44,8 @@
   - installed models → read from `get_model_info()`
   - uninstalled models → lookup from SQLite db
 - [ ] `olmon recommend --vram 8GB` — suggest models that fit
-- [ ] `olmon db update` — scrape ollama.com and populate local SQLite
-- [ ] `olmon db stats` — how many models cached
+- [x] `olmon db update` — scrape ollama.com and populate local SQLite
+- [x] `olmon db stats` — how many models cached
 - [ ] `olmon search <query>` — search local SQLite db
 - [ ] Warn in `watch` and `top` when VRAM usage above 90%
 - [ ] GPU temperature and power draw (NVIDIA via `nvidia-smi`)

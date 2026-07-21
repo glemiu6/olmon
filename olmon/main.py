@@ -5,6 +5,7 @@ import sys
 
 from olmon import __version__
 from olmon.commands.compare import compare_command
+from olmon.commands.db import db_stats_command, db_update_command
 from olmon.commands.init import init_config
 from olmon.commands.models import inspect_command, models_command
 from olmon.commands.ps import ps_command, stop_command
@@ -99,6 +100,22 @@ def parse_args(argv=None):
         "--interval", "-i", default=None, type=int, help="Refresh rate in seconds"
     )  # noqa: E501
 
+    # db
+    db_parser = subparsers.add_parser("db", help="Database commands")
+    db_subparsers = db_parser.add_subparsers(
+        title="Database commands", dest="db_command", metavar="< db command>"
+    )
+    db_subparser_update = db_subparsers.add_parser(
+        "update", help="Scrape ollama.com and refresh the local model cache"
+    )
+    db_subparser_update.add_argument(
+        "--index-only",
+        action="store_true",
+        help="Only update the index, skip models",
+        default=False,
+    )
+    db_subparsers.add_parser("stats", help="Show how many models/tags are cached")
+
     return parser.parse_args(argv)
 
 
@@ -140,6 +157,16 @@ def app():
             compare_command(args.host, args.models)
         case "top":
             top_command(args.host, args.interval)
+        case "db":
+            match args.db_command:
+                case "update":
+                    db_update_command(args.index_only)
+                case "stats":
+                    db_stats_command()
+                case _:
+                    parse_args(["db", "--help"])
+                    sys.exit(0)
+
         case _:
             parse_args(["--help"])
             sys.exit(0)

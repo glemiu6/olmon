@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 
 ---
+## [0.2.3] - 2026-07-22
+
+### Added
+- `olmon db update` - scrapes the Ollama library and updates the database.
+- `olmon db stats` - shows the path, number of models, tags cached, last update and the database size.
+
+---
+
+
 ## [0.2.0]
 
 ### Added
@@ -64,6 +73,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+[0.2.3]: https://github.com/glemiu6/olmon/compare/v0.2.0...v0.2.3
 [0.2.0]: https://github.com/glemiu6/olmon/compare/v0.1.3...v0.2.0
 [0.1.3]: https://github.com/glemiu6/olmon/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/glemiu6/olmon/compare/v0.1.0...v0.1.2
