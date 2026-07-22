@@ -49,7 +49,14 @@ def stop_model(host: str, model_name: str) -> dict | None:
 
 
 def get_total_vram() -> int | None:
-    """Fetches total VRAM from NVIDIA GPU via nvidia-smi"""
+    import platform
+
+    if platform.system() == "Darwin":
+        return _get_mac_vram()
+    return _get_nvidia_vram()
+
+
+def _get_nvidia_vram() -> int | None:
     try:
         import subprocess
 
@@ -62,3 +69,29 @@ def get_total_vram() -> int | None:
         return int(result.stdout.strip()) * 1024 * 1024
     except Exception:
         return None
+
+
+def _get_mac_vram() -> int | None:
+    import subprocess
+
+    try:
+        wired_limit_mb = int(
+            subprocess.run(
+                ["sysctl", "-n", "iogpu.wired_limit_mb"],
+                capture_output=True,
+                text=True,
+                check=True,
+            ).stdout.strip()
+        )
+        if wired_limit_mb > 0:
+            return wired_limit_mb * 1024 * 1024  # user has set a custom limit
+
+        total_ram = int(
+            subprocess.run(
+                ["sysctl", "-n", "hw.memsize"], capture_output=True, text=True, check=True
+            ).stdout.strip()
+        )
+        return int(total_ram * 0.75)  # default policy estimate
+    except Exception:
+        return None
+

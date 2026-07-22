@@ -222,6 +222,15 @@ def run_top(host: str, interval: int, total_vram: int | None):
     except KeyboardInterrupt:
         console.print("\n[dim]Stopped.[/dim]")
 
+def print_fit(model: str, size_bytes: int, total_vram: int, source: str, fits: bool) -> None:
+    indicator, color = ("✓", "green") if fits else ("✗", "red")
+    verdict = "fits" if fits else "does not fit"
+    console.print(
+        f"[{color}]{indicator}[/{color}] {model} {verdict} — "
+        f"{format_size(size_bytes)} needed / {format_size(total_vram)} VRAM [dim]({source})[/dim]"
+    )
+
+
 
 def format_size(bts: int) -> str:
     gb = bts / (1024**3)
