@@ -94,4 +94,3 @@ def _get_mac_vram() -> int | None:
         return int(total_ram * 0.75)  # default policy estimate
     except Exception:
         return None
-
