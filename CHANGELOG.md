@@ -2,11 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.5] - 2026-07-27
+
+### Added
+
+- `olmon recommend --vram <size>` - gives a recommendation of what model can fit in your VRAM
+
+### Fixed
+
+- Updated the fit command to take in consideration VRAM size and not model size
+
 ---
 
 ## [0.2.4] - 2026-07-22
 
 ### Added
+
 - `olmon fit <model>` - checks if system has enough VRAM to run a model.
 - Get the total VRAM size for macOS.
 
@@ -15,15 +26,16 @@ All notable changes to this project will be documented in this file.
 ## [0.2.3] - 2026-07-22
 
 ### Added
+
 - `olmon db update` - scrapes the Ollama library and updates the database.
 - `olmon db stats` - shows the path, number of models, tags cached, last update and the database size.
 
 ---
 
-
 ## [0.2.0]
 
 ### Added
+
 - `olmon top` - htop-style monitoring for running models
 - VRAM used / total shown in `olmon status` (NVIDIA GPUs)
 - `--no-color` flag for pipe-friendly output
@@ -31,10 +43,12 @@ All notable changes to this project will be documented in this file.
 ## [0.1.3] - 2026-06-28
 
 ### Added
+
 - `olmon compare` — side by side comparison of multiple models
 - `--json` flag on all commands for scriptable output
 
 ### Fixed
+
 - Fixed duplicate update notification when running `olmon update`
 
 ---
@@ -42,10 +56,12 @@ All notable changes to this project will be documented in this file.
 ## [0.1.2] - 2026-06-27
 
 ### Added
+
 - `olmon stop <model>` — unload a model from VRAM
 - Proper exit codes on all commands (0 success, 1 offline, 2 error)
 
 ### Fixed
+
 - Fixed permission denied error when installing from `/usr/local/bin`
 - Fixed binary name typo (`komit` → `olmon`) in `install.sh`
 - Fixed `get_latest_version()` returning empty string causing `v` version tag
@@ -55,10 +71,10 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-
 ## [0.1.0] - 2026-06-23
 
 ### Added
+
 - `olmon status` — check Ollama connection, version, and model counts
 - `olmon models` — list all installed models with size, family, quantization
 - `olmon models --sort` — sort by name, size, or date
@@ -82,6 +98,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+[0.2.5]: https://github.com/glemiu6/olmon/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/glemiu6/olmon/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/glemiu6/olmon/compare/v0.2.0...v0.2.3
 [0.2.0]: https://github.com/glemiu6/olmon/compare/v0.1.3...v0.2.0
