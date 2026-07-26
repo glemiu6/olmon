@@ -2,7 +2,8 @@
 
 ---
 
-## v0.1.0 — Foundation 
+## v0.1.0 — Foundation
+
 > Goal: Working CLI, can talk to Ollama
 
 - [x] Project setup (`rich` + `argparse` + `httpx`)
@@ -23,7 +24,8 @@
 
 ---
 
-## v0.2.0 — Scripting & Power Users 
+## v0.2.0 — Scripting & Power Users
+
 > Goal: Make olmon the DevOps-friendly Ollama tool
 
 - [x] `olmon stop <model>` — force unload a model from VRAM
@@ -38,12 +40,13 @@
 ---
 
 ## v0.3.0 — Hardware Awareness
+
 > Goal: Know your hardware limits before they hit you
 
-- [ ] `olmon fit <model>` — will this model fit in my VRAM?
-  - installed models → read from `get_model_info()`
-  - uninstalled models → lookup from SQLite db
-- [ ] `olmon recommend --vram 8GB` — suggest models that fit
+- [x] `olmon fit <model>` — will this model fit in my VRAM?
+    - installed models → read from `get_model_info()`
+    - uninstalled models → lookup from SQLite db
+- [x] `olmon recommend --vram 8GB` — suggest models that fit
 - [x] `olmon db update` — scrape ollama.com and populate local SQLite
 - [x] `olmon db stats` — how many models cached
 - [ ] `olmon search <query>` — search local SQLite db
@@ -54,6 +57,7 @@
 ---
 
 ## v0.4.0 — Discovery & Library
+
 > Goal: Explore models without leaving the terminal
 
 - [ ] `olmon biggest` — show largest installed models
@@ -66,6 +70,7 @@
 ---
 
 ## v0.5.0 — Interactive TUI
+
 > Goal: Transform olmon into a full-screen terminal dashboard
 
 - [ ] Switch to Textual framework
@@ -75,19 +80,20 @@
 - [ ] Search (`/`)
 - [ ] Sorting (`s`) and filtering (`f`)
 - [ ] Models view — interactive table
-  - Inspect selected model
-  - Unload model (`u`)
-  - Live expiry countdown
+    - Inspect selected model
+    - Unload model (`u`)
+    - Live expiry countdown
 - [ ] Dashboard view
-  - Live VRAM graph
-  - GPU usage graph
-  - CPU and RAM monitoring
+    - Live VRAM graph
+    - GPU usage graph
+    - CPU and RAM monitoring
 - [ ] Multi-screen interface (Models / GPU / Settings)
 - [ ] Footer with keyboard shortcuts
 
 ---
 
 ## v0.6.0 — History & Analytics
+
 > Goal: Understand how you use your models
 
 - [ ] SQLite usage database (`~/.config/olmon/history.db`)
@@ -100,6 +106,7 @@
 ---
 
 ## v0.7.0 — Benchmarks
+
 > Goal: Measure and compare model performance
 
 - [ ] `olmon bench <model>` — run benchmark prompt, measure TPS and VRAM
@@ -112,6 +119,7 @@
 ---
 
 ## v0.8.0 — Alerts & Automation
+
 > Goal: React automatically to model events
 
 - [ ] `olmon alert` — desktop notification when model loads/unloads
@@ -123,6 +131,7 @@
 ---
 
 ## v1.0.0 — Stable Release
+
 > Goal: Production-ready, polished, and documented
 
 - [ ] Full test coverage
@@ -137,20 +146,22 @@
 ---
 
 ## v1.1.0 — Plugin System
+
 > Goal: Let the community extend olmon
 
 - [ ] Plugin architecture
 - [ ] `olmon plugins` — list installed plugins
 - [ ] Official plugins:
-  - `gpu-exporter` — Prometheus metrics
-  - `discord-alerts` — Discord notifications
-  - `grafana` — Grafana dashboard export
-  - `slack` — Slack alerts
-  - `prometheus` — metrics endpoint
+    - `gpu-exporter` — Prometheus metrics
+    - `discord-alerts` — Discord notifications
+    - `grafana` — Grafana dashboard export
+    - `slack` — Slack alerts
+    - `prometheus` — metrics endpoint
 
 ---
 
 ## v2.0.0 — Browser Dashboard
+
 > Goal: Web interface powered by the same backend
 
 - [ ] `olmon serve` — start local web dashboard

@@ -6,6 +6,8 @@ from rich.live import Live
 from rich.panel import Panel
 from rich.table import Table
 
+from olmon.db import estimate_vram_bytes
+
 console = Console()
 
 
@@ -131,6 +133,39 @@ def print_stop(model: str) -> None:
     console.print(f"[bold green]✓[/bold green] {model} unloaded from VRAM")
 
 
+def print_recommend(tags, max_bytes: int) -> None:
+    table = Table(title=f"Models with an estimated VRAM need under {format_size(max_bytes)}")
+    table.add_column("Model")
+    table.add_column("File Size")
+    table.add_column("Est. VRAM")
+    table.add_column("Context")
+    table.add_column("Pulls")
+
+    for tag in tags:
+        table.add_row(
+            tag["full_name"],
+            format_size(tag["size_bytes"]),
+            f"~{format_size(estimate_vram_bytes(tag['size_bytes']))}",
+            str(tag["context_length"] or "—"),
+            str(tag["pulls"]),
+        )
+    console.print(table)
+    console.print(
+        "[dim]Est. VRAM includes a rough margin for KV cache/compute overhead beyond file size[/dim]"  # noqa: E501
+    )
+
+
+def print_fit(model: str, size_bytes: int, total_vram: int, source: str, fits: bool) -> None:
+    estimated = estimate_vram_bytes(size_bytes)
+    indicator, color = ("✓", "green") if fits else ("✗", "red")
+    verdict = "fits" if fits else "does not fit"
+    console.print(
+        f"[{color}]{indicator}[/{color}] {model} {verdict} — "
+        f"file size {format_size(size_bytes)}, [dim]est. VRAM ~{format_size(estimated)}[/dim] "
+        f"/ {format_size(total_vram)} VRAM [dim]({source})[/dim]"
+    )
+
+
 def print_stop_error(model: str) -> None:
     console.print(f"[bold red]✗[/bold red] Could not unload {model} from VRAM")
 
@@ -221,15 +256,6 @@ def run_top(host: str, interval: int, total_vram: int | None):
                 time.sleep(interval)
     except KeyboardInterrupt:
         console.print("\n[dim]Stopped.[/dim]")
-
-
-def print_fit(model: str, size_bytes: int, total_vram: int, source: str, fits: bool) -> None:
-    indicator, color = ("✓", "green") if fits else ("✗", "red")
-    verdict = "fits" if fits else "does not fit"
-    console.print(
-        f"[{color}]{indicator}[/{color}] {model} {verdict} — "
-        f"{format_size(size_bytes)} needed / {format_size(total_vram)} VRAM [dim]({source})[/dim]"
-    )
 
 
 def format_size(bts: int) -> str:

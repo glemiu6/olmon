@@ -10,6 +10,7 @@ from olmon.commands.fit import fit_command
 from olmon.commands.init import init_config
 from olmon.commands.models import inspect_command, models_command
 from olmon.commands.ps import ps_command, stop_command
+from olmon.commands.recommend import recommend_command
 from olmon.commands.status import status_command
 from olmon.commands.top import top_command
 from olmon.commands.uninstall import uninstall
@@ -121,6 +122,11 @@ def parse_args(argv=None):
     fit_parser = subparsers.add_parser("fit", help="Checks if a models fits in VRAM")
     fit_parser.add_argument("model", metavar="<model>", help="Model name (e.g. llama3.2:3b)")
 
+    # recommend
+    recommend_parser = subparsers.add_parser(
+        "recommend", help="Show the best models to fit in VRAM"
+    )
+    recommend_parser.add_argument("--vram", default=None, metavar="<size>", help="e.g. --vram 8GB")
     return parser.parse_args(argv)
 
 
@@ -164,6 +170,8 @@ def app():
             top_command(args.host, args.interval)
         case "fit":
             fit_command(args.host, args.model)
+        case "recommend":
+            recommend_command(args.vram)
         case "db":
             match args.db_command:
                 case "update":

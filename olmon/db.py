@@ -6,6 +6,13 @@ from platformdirs import user_data_dir
 
 DB_PATH = Path(user_data_dir("olmon")) / "models.db"
 
+VRAM_OVERHEAD_FACTOR = 1.2
+
+
+def estimate_vram_bytes(size_bytes: int) -> int:
+    """Rough estimate of actual VRAM needed to run a model, given its file size."""
+    return int(size_bytes * VRAM_OVERHEAD_FACTOR)
+
 
 SCHEMA = """
 
@@ -18,7 +25,7 @@ CREATE TABLE IF NOT EXISTS models (
     updated_text TEXT,
     scraped_at TEXT
 );
-    
+
 CREATE TABLE IF NOT EXISTS model_tags (
     full_name TEXT PRIMARY KEY,
     model_name TEXT NOT NULL REFERENCES models(name),
@@ -31,7 +38,7 @@ CREATE TABLE IF NOT EXISTS model_tags (
     updated_text TEXT,
     scraped_at TEXT
 );
-    
+
 CREATE INDEX IF NOT EXISTS idx_model_tags_model_name ON model_tags(model_name);
 CREATE INDEX IF NOT EXISTS idx_model_tags_size ON model_tags(size_bytes);
 """
@@ -122,14 +129,24 @@ def find_tags_under_size(
     conn: sqlite3.Connection, max_bytes: int, limit: int = 20
 ) -> list[sqlite3.Row]:
     conn.row_factory = sqlite3.Row
+    file_size_threashold = int(max_bytes / VRAM_OVERHEAD_FACTOR)
     return conn.execute(
         """
-        SELECT model_tags.*, models.description,models.pulls
-        FROM model_tags
-        JOIN models ON model_tags.model_name = models.name
-        WHERE size_bytes IS NOT NULL AND size_bytes <= ?
-        ORDER BY models.pulls DESC, size_bytes DESC
+        WITH ranked AS (
+            SELECT model_tags.*, models.description, models.pulls,
+                   ROW_NUMBER() OVER (
+                       PARTITION BY model_tags.model_name
+                       ORDER BY model_tags.size_bytes DESC
+                   ) AS rn
+            FROM model_tags
+            JOIN models ON models.name = model_tags.model_name
+            WHERE size_bytes IS NOT NULL AND size_bytes <= ?
+        )
+        SELECT * FROM ranked
+        WHERE rn = 1
+        ORDER BY pulls DESC
         LIMIT ?
+
         """,
-        (max_bytes, limit),
+        (file_size_threashold, limit),
     ).fetchall()
