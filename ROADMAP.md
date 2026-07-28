@@ -49,10 +49,8 @@
 - [x] `olmon recommend --vram 8GB` — suggest models that fit
 - [x] `olmon db update` — scrape ollama.com and populate local SQLite
 - [x] `olmon db stats` — how many models cached
-- [ ] `olmon search <query>` — search local SQLite db
-- [ ] Warn in `watch` and `top` when VRAM usage above 90%
-- [ ] GPU temperature and power draw (NVIDIA via `nvidia-smi`)
-- [ ] AMD GPU support
+- [x] `olmon search <query>` — search local SQLite db
+- [x] Warn in `watch` and `top` when VRAM usage above 90%
 
 ---
 

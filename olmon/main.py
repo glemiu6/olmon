@@ -11,6 +11,7 @@ from olmon.commands.init import init_config
 from olmon.commands.models import inspect_command, models_command
 from olmon.commands.ps import ps_command, stop_command
 from olmon.commands.recommend import recommend_command
+from olmon.commands.search import search_command
 from olmon.commands.status import status_command
 from olmon.commands.top import top_command
 from olmon.commands.uninstall import uninstall
@@ -127,6 +128,15 @@ def parse_args(argv=None):
         "recommend", help="Show the best models to fit in VRAM"
     )
     recommend_parser.add_argument("--vram", default=None, metavar="<size>", help="e.g. --vram 8GB")
+
+    # search
+    search_parser = subparsers.add_parser(
+        "search", help="Search cached models by name or description"
+    )
+    search_parser.add_argument("query", metavar="<query>", help="Search term, e.g. vision")
+    search_parser.add_argument(
+        "--limit", "-l", default=None, type=int, metavar="<n>", help="Max results (default: 20)"
+    )
     return parser.parse_args(argv)
 
 
@@ -172,6 +182,8 @@ def app():
             fit_command(args.host, args.model)
         case "recommend":
             recommend_command(args.vram)
+        case "search":
+            search_command(args.query, args.limit)
         case "db":
             match args.db_command:
                 case "update":

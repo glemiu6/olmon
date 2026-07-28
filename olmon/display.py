@@ -91,8 +91,6 @@ def print_inspect(data: dict):
     model_info = data.get("model_info", {})
     capabilities = data.get("capabilities", [])
 
-    # parse parameters string into a dict
-    # "temperature 0.7\nnum_ctx 2048" → {"temperature": "0.7", "num_ctx": "2048"}
     raw_params = data.get("parameters", "")
     params = {}
     for line in raw_params.splitlines():
@@ -100,7 +98,6 @@ def print_inspect(data: dict):
         if len(parts) == 2:
             params[parts[0]] = parts[1]
 
-    # clean up modified_at
     modified = data.get("modified_at", "—").split("T")[0]
 
     # find context_length from model_info (key ends with .context_length)
@@ -110,7 +107,6 @@ def print_inspect(data: dict):
     )
     blocks = next((str(v) for k, v in model_info.items() if k.endswith(".block_count")), "—")
 
-    # build the panel content
     content = (
         f"[bold]Family[/bold]         {details.get('family', '—')}\n"
         f"[bold]Format[/bold]         {details.get('format', '—')}\n"
@@ -147,7 +143,7 @@ def print_recommend(tags, max_bytes: int) -> None:
             format_size(tag["size_bytes"]),
             f"~{format_size(estimate_vram_bytes(tag['size_bytes']))}",
             str(tag["context_length"] or "—"),
-            str(tag["pulls"]),
+            format_pulls(tag["pulls"]),
         )
     console.print(table)
     console.print(
@@ -200,7 +196,10 @@ def print_top(models: list, total_vram: int | None) -> Panel:
     used_vram = sum(m.get("size_vram", 0) for m in models)
 
     if total_vram:
+        pct = used_vram / total_vram
         vram_summary = f"VRAM: {format_size(used_vram)} / {format_size(total_vram)}"
+        if pct >= 0.9:
+            vram_summary += "   [bold red]⚠ VRAM above 90%[/bold red]"
     else:
         vram_summary = f"VRAM: {format_size(used_vram)} used"
 
@@ -256,6 +255,38 @@ def run_top(host: str, interval: int, total_vram: int | None):
                 time.sleep(interval)
     except KeyboardInterrupt:
         console.print("\n[dim]Stopped.[/dim]")
+
+
+def print_search_results(rows, query: str) -> None:
+    if not rows:
+        console.print(f"[yellow]No cached models match '{query}'[/yellow] — try: olmon db update")
+        return
+
+    table = Table(title=f"Search results for '{query}'")
+    table.add_column("Model")
+    table.add_column("Description", max_width=50)
+    table.add_column("Capabilities")
+    table.add_column("Tags", justify="right")
+    table.add_column("Pulls", justify="right")
+
+    for row in rows:
+        table.add_row(
+            row["name"],
+            row["description"] or "—",
+            row["capabilities"].replace(",", ", ") if row["capabilities"] else "—",
+            str(row["tag_count"]),
+            format_pulls(row["pulls"]),
+        )
+    console.print(table)
+    console.print(f"[dim]{len(rows)} result(s)[/dim]")
+
+
+def format_pulls(pulls: int) -> str:
+    if pulls >= 1_000_000:
+        return f"{pulls / 1_000_000:.1f}M"
+    if pulls >= 1_000:
+        return f"{pulls / 1_000:.1f}K"
+    return str(pulls)
 
 
 def format_size(bts: int) -> str:

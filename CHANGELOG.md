@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+---
+
+## [0.2.6] - 2026-07-28
+
+### Added
+
+- `olmon search <query>` - search cached models by name or description
+- `olmon top` & `olmon watch` warn if the VRAM usage is above 90%
+
+### Fixed
+
+- Formatted the pulls to be easier to read in recommended command
+
+---
+
 ## [0.2.5] - 2026-07-27
 
 ### Added
@@ -98,6 +113,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+[0.2.6]: https://github.com/glemiu6/olmon/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/glemiu6/olmon/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/glemiu6/olmon/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/glemiu6/olmon/compare/v0.2.0...v0.2.3
